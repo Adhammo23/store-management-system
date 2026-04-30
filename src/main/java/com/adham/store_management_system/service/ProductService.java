@@ -34,22 +34,19 @@ public class ProductService {
         Product product = ProductMapper.toEntity(dto,category);
         return productRepository.save(product);
     }
-    public Product updateProduct(Product product) {
+    public Product updateProductById(long id, ProductRequestDto dto) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setCategory(category);
         return productRepository.save(product);
-    }
-    public Product updateProductById(long id, Product updatedProduct) {
-        return productRepository.findById(id)
-                .map(existing -> {
-                    existing.setName(updatedProduct.getName());
-                    existing.setPrice(updatedProduct.getPrice());
-                    existing.setCategory(updatedProduct.getCategory());
-                    return productRepository.save(existing);
-                })
-                .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
     public void deleteProduct(Long id) {
-        Product productToDelete = findById(id);
-        productRepository.delete(productToDelete);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        productRepository.delete(product);
     }
 }

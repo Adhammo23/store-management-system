@@ -29,11 +29,14 @@ public class ProductController {
         return productService.addProduct(dto);
     }
     @PatchMapping("/{productId}")
-    public Product update(@PathVariable Long productId, @RequestBody Product product) {
-    return productService.updateProductById(productId,product);
+    public Product update(@PathVariable Long productId,
+                          @RequestBody ProductRequestDto dto) {
+
+    return productService.updateProductById(productId,dto);
     }
     @DeleteMapping("/{productId}")
     public void deleteById(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
     }
 
 }
