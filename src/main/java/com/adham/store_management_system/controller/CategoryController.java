@@ -1,6 +1,7 @@
 package com.adham.store_management_system.controller;
 
 import com.adham.store_management_system.dto.CategoryRequestDto;
+import com.adham.store_management_system.dto.ProductResponseDto;
 import com.adham.store_management_system.entity.Category;
 import com.adham.store_management_system.service.CategoryService;
 import com.adham.store_management_system.service.ProductService;

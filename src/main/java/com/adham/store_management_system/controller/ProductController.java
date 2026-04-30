@@ -1,6 +1,7 @@
 package com.adham.store_management_system.controller;
 
 import com.adham.store_management_system.dto.ProductRequestDto;
+import com.adham.store_management_system.dto.ProductResponseDto;
 import com.adham.store_management_system.entity.Product;
 import com.adham.store_management_system.service.ProductService;
 import jakarta.validation.Valid;
@@ -17,11 +18,12 @@ public class ProductController {
         this.productService = productService;
     }
     @GetMapping
-    public List<Product> findAll() {
+    public List<ProductResponseDto> findAll() {
         return productService.findAll();
     }
     @GetMapping("/{productID}")
-    public Product findById(@PathVariable Long productID) {
+    public ProductResponseDto findById(@PathVariable Long productID) {
+
         return productService.findById(productID);
     }
     @PostMapping
