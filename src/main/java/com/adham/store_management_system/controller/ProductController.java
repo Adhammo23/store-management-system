@@ -1,0 +1,39 @@
+package com.adham.store_management_system.controller;
+
+import com.adham.store_management_system.dto.ProductRequestDto;
+import com.adham.store_management_system.entity.Product;
+import com.adham.store_management_system.service.ProductService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/products")
+public class ProductController {
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+    @GetMapping
+    public List<Product> findAll() {
+        return productService.findAll();
+    }
+    @GetMapping("/{productID}")
+    public Product findById(@PathVariable Long productID) {
+        return productService.findById(productID);
+    }
+    @PostMapping
+    public Product addProduct(@Valid @RequestBody ProductRequestDto dto) {
+        return productService.addProduct(dto);
+    }
+    @PatchMapping("/{productId}")
+    public Product update(@PathVariable Long productId, @RequestBody Product product) {
+    return productService.updateProductById(productId,product);
+    }
+    @DeleteMapping("/{productId}")
+    public void deleteById(@PathVariable Long productId) {
+    }
+
+}
