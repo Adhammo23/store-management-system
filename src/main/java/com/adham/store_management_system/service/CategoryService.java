@@ -2,6 +2,7 @@ package com.adham.store_management_system.service;
 
 import com.adham.store_management_system.dto.CategoryRequestDto;
 import com.adham.store_management_system.entity.Category;
+import com.adham.store_management_system.exception.ResourceNotFoundException;
 import com.adham.store_management_system.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class CategoryService {
            return categoryRepository.findAll();
      }
      public Category findById(Long id) {
-         return categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+         return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
      }
      public Category addCategory( CategoryRequestDto dto) {
          Category category = new Category();

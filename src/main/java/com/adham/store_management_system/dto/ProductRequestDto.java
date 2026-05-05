@@ -13,7 +13,7 @@ import lombok.*;
 public class ProductRequestDto {
     @NotBlank(message = "Product name is required")
     private String name;
-    @Positive(message = "Price must be greater than zer")
+    @Positive(message = "Price must be greater than zero")
     private Double price;
     @NotNull(message = "Category id is required")
     private Long categoryId;
