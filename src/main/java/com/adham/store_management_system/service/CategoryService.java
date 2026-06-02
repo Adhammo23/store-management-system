@@ -4,16 +4,15 @@ import com.adham.store_management_system.dto.CategoryRequestDto;
 import com.adham.store_management_system.entity.Category;
 import com.adham.store_management_system.exception.ResourceNotFoundException;
 import com.adham.store_management_system.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
      private final CategoryRepository categoryRepository;
 
-     public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-     }
      public List<Category> findAll() {
            return categoryRepository.findAll();
      }
@@ -26,5 +25,6 @@ public class CategoryService {
          category.setDescription(dto.getDescription());
          return categoryRepository.save(category);
      }
+
 
 }

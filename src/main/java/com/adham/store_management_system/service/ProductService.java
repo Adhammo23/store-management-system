@@ -8,27 +8,27 @@ import com.adham.store_management_system.exception.ResourceNotFoundException;
 import com.adham.store_management_system.mapper.ProductMapper;
 import com.adham.store_management_system.repository.CategoryRepository;
 import com.adham.store_management_system.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository,
-                          CategoryRepository categoryRepository) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-    }
 
-    public List<ProductResponseDto> findAll() {
-        return productRepository.findAll()
-                .stream()
-                .map(ProductMapper::toResponse)
-                .toList();
+    public Page<ProductResponseDto> findAll(int page , int size , String sortBy) {
+        Pageable pageable = PageRequest.of(page , size, Sort.by(sortBy));
+        return productRepository.findAll(pageable)
+                .map(ProductMapper::toResponse);
     }
 
     public ProductResponseDto findById(Long id) {
@@ -64,13 +64,12 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public List<ProductResponseDto> findAllByCategoryId(Long categoryId) {
+    public Page<ProductResponseDto> findAllByCategoryId(Long categoryId, int page, int size, String sortBy) {
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
-        return productRepository.findByCategoryId(categoryId)
-                .stream()
-                .map(ProductMapper::toResponse)
-                .toList();
+        Pageable pageable = PageRequest.of(page , size, Sort.by(sortBy));
+        return productRepository.findByCategoryId(categoryId,pageable)
+                .map(ProductMapper::toResponse);
     }
 }

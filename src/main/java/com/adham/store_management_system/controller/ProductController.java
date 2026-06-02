@@ -5,21 +5,23 @@ import com.adham.store_management_system.dto.ProductResponseDto;
 import com.adham.store_management_system.entity.Product;
 import com.adham.store_management_system.service.ProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 
 @RestController
 @RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
     @GetMapping
-    public List<ProductResponseDto> findAll() {
-        return productService.findAll();
+    public Page<ProductResponseDto> findAll(
+            @RequestParam(defaultValue = "0" ) int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sortBy
+    ) {
+        return productService.findAll(page, size, sortBy);
     }
     @GetMapping("/{productID}")
     public ProductResponseDto findById(@PathVariable Long productID) {

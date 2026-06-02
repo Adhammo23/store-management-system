@@ -6,20 +6,19 @@ import com.adham.store_management_system.entity.Category;
 import com.adham.store_management_system.service.CategoryService;
 import com.adham.store_management_system.service.ProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
+@RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
     private final ProductService productService;
 
-    public CategoryController(CategoryService categoryService, ProductService productService) {
-        this.categoryService = categoryService;
-        this.productService = productService;
-    }
     @GetMapping
     public List<Category> findAll() {
         return categoryService.findAll();
@@ -30,8 +29,12 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}/products")
-    public List<ProductResponseDto> findByCategory(@PathVariable Long categoryId) {
-        return productService.findAllByCategoryId(categoryId);
+    public Page<ProductResponseDto> findByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0" ) int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        return productService.findAllByCategoryId(categoryId,page,size,sortBy);
     }
 
     @PostMapping
