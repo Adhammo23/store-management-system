@@ -29,11 +29,11 @@ public class ProductController {
         return productService.findById(productID);
     }
     @PostMapping
-    public Product addProduct(@Valid @RequestBody ProductRequestDto dto) {
+    public ProductResponseDto addProduct(@Valid @RequestBody ProductRequestDto dto) {
         return productService.addProduct(dto);
     }
-    @PatchMapping("/{productId}")
-    public Product update(@Valid @PathVariable Long productId,
+    @PutMapping("/{productId}")
+    public ProductResponseDto update(@Valid @PathVariable Long productId,
                           @RequestBody ProductRequestDto dto) {
 
     return productService.updateProductById(productId,dto);

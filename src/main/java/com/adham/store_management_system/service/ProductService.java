@@ -37,14 +37,15 @@ public class ProductService {
         return ProductMapper.toResponse(product);
     }
 
-    public Product addProduct(ProductRequestDto dto) {
+    public ProductResponseDto addProduct(ProductRequestDto dto) {
         Category category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         Product product = ProductMapper.toEntity(dto, category);
-        return productRepository.save(product);
+        Product saveProduct = productRepository.save(product);
+        return ProductMapper.toResponse(saveProduct);
     }
 
-    public Product updateProductById(Long id, ProductRequestDto dto) {
+    public ProductResponseDto updateProductById(Long id, ProductRequestDto dto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
@@ -55,7 +56,9 @@ public class ProductService {
         product.setPrice(dto.getPrice());
         product.setCategory(category);
 
-        return productRepository.save(product);
+        Product updateProduct = productRepository.save(product);
+
+        return ProductMapper.toResponse(updateProduct);
     }
 
     public void deleteProduct(Long id) {
