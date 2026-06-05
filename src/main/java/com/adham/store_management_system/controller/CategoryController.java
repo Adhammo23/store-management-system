@@ -1,6 +1,7 @@
 package com.adham.store_management_system.controller;
 
 import com.adham.store_management_system.dto.CategoryRequestDto;
+import com.adham.store_management_system.dto.CategoryResponseDto;
 import com.adham.store_management_system.dto.ProductResponseDto;
 import com.adham.store_management_system.entity.Category;
 import com.adham.store_management_system.service.CategoryService;
@@ -36,9 +37,8 @@ public class CategoryController {
             @RequestParam(defaultValue = "id") String sortBy) {
         return productService.findAllByCategoryId(categoryId,page,size,sortBy);
     }
-
     @PostMapping
-    public Category addCategory(@Valid @RequestBody CategoryRequestDto dto) {
+    public CategoryResponseDto addCategory(@Valid @RequestBody CategoryRequestDto dto) {
         return categoryService.addCategory(dto);
     }
 }

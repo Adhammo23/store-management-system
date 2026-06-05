@@ -1,8 +1,10 @@
 package com.adham.store_management_system.service;
 
 import com.adham.store_management_system.dto.CategoryRequestDto;
+import com.adham.store_management_system.dto.CategoryResponseDto;
 import com.adham.store_management_system.entity.Category;
 import com.adham.store_management_system.exception.ResourceNotFoundException;
+import com.adham.store_management_system.mapper.CategoryMapper;
 import com.adham.store_management_system.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,11 @@ public class CategoryService {
      public Category findById(Long id) {
          return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
      }
-     public Category addCategory( CategoryRequestDto dto) {
+     public CategoryResponseDto addCategory(CategoryRequestDto dto) {
          Category category = new Category();
          category.setName(dto.getName());
          category.setDescription(dto.getDescription());
-         return categoryRepository.save(category);
+         Category saveCategory = categoryRepository.save(category);
+         return CategoryMapper.toResponse(saveCategory);
      }
-
-
 }
