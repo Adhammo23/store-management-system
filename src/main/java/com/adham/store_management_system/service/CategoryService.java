@@ -28,4 +28,15 @@ public class CategoryService {
          Category saveCategory = categoryRepository.save(category);
          return CategoryMapper.toResponse(saveCategory);
      }
+    public CategoryResponseDto updateCategory(Long id, CategoryRequestDto categoryDto){
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException( "Category not found"));
+
+        category.setName(categoryDto.getName());
+        category.setDescription(categoryDto.getDescription());
+
+        Category updateCategory = categoryRepository.save(category);
+
+        return CategoryMapper.toResponse(updateCategory);
+    }
 }

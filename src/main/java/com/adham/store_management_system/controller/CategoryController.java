@@ -41,4 +41,8 @@ public class CategoryController {
     public CategoryResponseDto addCategory(@Valid @RequestBody CategoryRequestDto dto) {
         return categoryService.addCategory(dto);
     }
+    @PutMapping("/{categoryId}")
+    public CategoryResponseDto updateCategory(@Valid @RequestBody CategoryRequestDto dto,@PathVariable Long categoryId){
+        return categoryService.updateCategory(categoryId,dto);
+    }
 }

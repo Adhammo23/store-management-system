@@ -2,7 +2,6 @@ package com.adham.store_management_system.controller;
 
 import com.adham.store_management_system.dto.ProductRequestDto;
 import com.adham.store_management_system.dto.ProductResponseDto;
-import com.adham.store_management_system.entity.Product;
 import com.adham.store_management_system.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
