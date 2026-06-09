@@ -15,11 +15,17 @@ import java.util.List;
 public class CategoryService {
      private final CategoryRepository categoryRepository;
 
-     public List<Category> findAll() {
-           return categoryRepository.findAll();
+     public List<CategoryResponseDto> findAll() {
+         return categoryRepository.findAll()
+                 .stream()
+                 .map(CategoryMapper::toResponse)
+                 .toList() ;
      }
-     public Category findById(Long id) {
-         return categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+     public CategoryResponseDto findById(Long id) {
+         Category category =  categoryRepository.findById(id)
+                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+         return CategoryMapper.toResponse(category);
      }
      public CategoryResponseDto addCategory(CategoryRequestDto dto) {
          Category category = new Category();

@@ -3,9 +3,12 @@ package com.adham.store_management_system.exception;
 import com.adham.store_management_system.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,10 +22,14 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException e) {
+        List<String> errors = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .toList();
         ErrorResponse errorResponse = new ErrorResponse();
-        String massage = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        errorResponse.setMessage(massage);
+        errorResponse.setMessage(String.join(", ",errors));
         errorResponse.setTimestamp(System.currentTimeMillis());
         return ResponseEntity.badRequest().body(errorResponse);
     }

@@ -21,11 +21,11 @@ public class CategoryController {
     private final ProductService productService;
 
     @GetMapping
-    public List<Category> findAll() {
+    public List<CategoryResponseDto> findAll() {
         return categoryService.findAll();
     }
     @GetMapping("/{categoryId}")
-    public Category findById(@PathVariable Long categoryId) {
+    public CategoryResponseDto findById(@PathVariable Long categoryId) {
         return categoryService.findById(categoryId);
     }
 
