@@ -15,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -40,9 +38,25 @@ public class ProductService {
     public ProductResponseDto addProduct(ProductRequestDto dto) {
         Category category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        if (productRepository.existsByName(dto.getName())) {
+            throw new IllegalArgumentException("Product already exists! To add more quantities, please use the Restock/Inventory endpoint.");
+        }
+
         Product product = ProductMapper.toEntity(dto, category);
+        category.addProduct(product);
         Product saveProduct = productRepository.save(product);
         return ProductMapper.toResponse(saveProduct);
+    }
+    public ProductResponseDto restock(Long productId, Integer quantity){
+        if (quantity <=0){
+            throw new IllegalArgumentException("Quantity to add must be greater than zero");
+        }
+        Product product = productRepository.findById(productId)
+                .orElseThrow(()-> new ResourceNotFoundException( "product not found"));
+
+        product.setStockQuantity(product.getStockQuantity() + quantity);
+        Product updateStock = productRepository.save(product);
+        return ProductMapper.toResponse(updateStock);
     }
 
     public ProductResponseDto updateProductById(Long id, ProductRequestDto dto) {

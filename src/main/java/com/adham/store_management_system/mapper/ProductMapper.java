@@ -12,6 +12,7 @@ public class ProductMapper {
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setCategory(category);
+        product.setStockQuantity(dto.getStockQuantity());
         return  product;
     }
     // return product from entity to client
