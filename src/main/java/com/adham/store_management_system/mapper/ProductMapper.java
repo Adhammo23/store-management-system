@@ -22,6 +22,7 @@ public class ProductMapper {
         dto.setProductName(product.getName());
         dto.setProductPrice(product.getPrice());
         dto.setCategoryName(product.getCategory().getName());
+        dto.setStockQuantity(product.getStockQuantity());
         return dto;
     }
 }

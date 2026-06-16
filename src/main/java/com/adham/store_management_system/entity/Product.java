@@ -1,6 +1,9 @@
 package com.adham.store_management_system.entity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
+
 @Setter
 @Getter
 @ToString
@@ -15,7 +18,7 @@ public class Product {
     @Column(unique = true, nullable = false)
     private String name;
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

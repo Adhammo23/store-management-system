@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.apache.logging.log4j.message.Message;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @ToString
@@ -18,7 +20,7 @@ public class ProductRequestDto {
     @NotBlank(message = "Product name is required")
     private String name;
     @Positive(message = "Price must be greater than zero")
-    private Double price;
+    private BigDecimal price;
     @NotNull(message = "Category id is required")
     private Long categoryId;
     @NotNull(message = "Stock quantity is required")
