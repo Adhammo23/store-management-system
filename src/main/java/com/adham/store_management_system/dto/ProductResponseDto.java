@@ -16,5 +16,5 @@ public class ProductResponseDto {
     private String productName;
     private BigDecimal productPrice;
     private String categoryName;
-    private double stockQuantity;
+    private Integer stockQuantity;
 }

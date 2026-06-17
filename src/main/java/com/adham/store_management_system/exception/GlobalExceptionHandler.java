@@ -43,8 +43,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error("Unhandled exception", e);
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        errorResponse.setMessage("Internal server error");
+        errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorResponse.setMessage(e.getMessage());
         errorResponse.setTimestamp(System.currentTimeMillis());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
