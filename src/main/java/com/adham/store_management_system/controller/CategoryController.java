@@ -3,12 +3,13 @@ package com.adham.store_management_system.controller;
 import com.adham.store_management_system.dto.CategoryRequestDto;
 import com.adham.store_management_system.dto.CategoryResponseDto;
 import com.adham.store_management_system.dto.ProductResponseDto;
-import com.adham.store_management_system.entity.Category;
 import com.adham.store_management_system.service.CategoryService;
 import com.adham.store_management_system.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,30 +20,33 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
     private final ProductService productService;
-
     @GetMapping
-    public List<CategoryResponseDto> findAll() {
-        return categoryService.findAll();
+    public ResponseEntity<List<CategoryResponseDto>> findAll() {
+        return ResponseEntity.ok(categoryService.findAll());
     }
+
     @GetMapping("/{categoryId}")
-    public CategoryResponseDto findById(@PathVariable Long categoryId) {
-        return categoryService.findById(categoryId);
+    public ResponseEntity<CategoryResponseDto> findById(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(categoryService.findById(categoryId));
     }
 
     @GetMapping("/{categoryId}/products")
-    public Page<ProductResponseDto> findByCategory(
+    public ResponseEntity<Page<ProductResponseDto>> findByCategory(
             @PathVariable Long categoryId,
-            @RequestParam(defaultValue = "0" ) int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sortBy) {
-        return productService.findAllByCategoryId(categoryId,page,size,sortBy);
+        return ResponseEntity.ok(productService.findAllByCategoryId(categoryId, page, size, sortBy));
     }
+
     @PostMapping
-    public CategoryResponseDto addCategory(@Valid @RequestBody CategoryRequestDto dto) {
-        return categoryService.addCategory(dto);
+    public ResponseEntity<CategoryResponseDto> addCategory(@Valid @RequestBody CategoryRequestDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.addCategory(dto));
     }
+
     @PutMapping("/{categoryId}")
-    public CategoryResponseDto updateCategory(@Valid @RequestBody CategoryRequestDto dto,@PathVariable Long categoryId){
-        return categoryService.updateCategory(categoryId,dto);
+    public ResponseEntity<CategoryResponseDto> updateCategory(@Valid @RequestBody CategoryRequestDto dto,
+                                                              @PathVariable Long categoryId) {
+        return ResponseEntity.ok(categoryService.updateCategory(categoryId, dto));
     }
 }

@@ -6,6 +6,8 @@ import com.adham.store_management_system.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,34 +17,40 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public Page<ProductResponseDto> findAll(
-            @RequestParam(defaultValue = "0" ) int page,
+    public ResponseEntity<Page<ProductResponseDto>> findAll(
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sortBy
     ) {
-        return productService.findAll(page, size, sortBy);
+        return ResponseEntity.ok(productService.findAll(page, size, sortBy));
     }
+
     @GetMapping("/{productID}")
-    public ProductResponseDto findById(@PathVariable Long productID) {
+    public ResponseEntity<ProductResponseDto> findById(@PathVariable Long productID) {
 
-        return productService.findById(productID);
+        return ResponseEntity.ok(productService.findById(productID));
     }
+
     @PostMapping
-    public ProductResponseDto addProduct(@Valid @RequestBody ProductRequestDto dto) {
-        return productService.addProduct(dto);
+    public ResponseEntity<ProductResponseDto> addProduct(@Valid @RequestBody ProductRequestDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(dto));
     }
-    @PutMapping("/{productId}")
-    public ProductResponseDto update(@PathVariable Long productId,
-                         @Valid @RequestBody ProductRequestDto dto) {
 
-    return productService.updateProductById(productId,dto);
+    @PutMapping("/{productId}")
+    public ResponseEntity<ProductResponseDto> update(@PathVariable Long productId,
+                                                     @Valid @RequestBody ProductRequestDto dto) {
+        return ResponseEntity.ok(productService.updateProductById(productId, dto));
     }
+
     @PutMapping("/{productId}/stock")
-    public ProductResponseDto restockProduct(@PathVariable Long productId, @RequestParam Integer quantity){
-        return productService.restock(productId,quantity);
+    public ResponseEntity<ProductResponseDto> restockProduct(@PathVariable Long productId,
+                                                             @RequestParam Integer quantity) {
+        return ResponseEntity.ok(productService.restock(productId, quantity));
     }
+
     @DeleteMapping("/{productId}")
-    public void deleteById(@PathVariable Long productId) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long productId) {
         productService.deleteProduct(productId);
+        return ResponseEntity.noContent().build();
     }
 }
