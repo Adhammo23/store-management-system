@@ -14,6 +14,7 @@ import com.adham.store_management_system.user.User;
 import com.adham.store_management_system.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +33,12 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(OrderRequestDto requestDto){
-
-
         // get user who created order
-        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication != null ? authentication.getName() : null;
         User user = userRepository.findByEmail(currentUserEmail).orElseThrow(()
                 -> new ResourceNotFoundException("User not found"));
-
+        log.info("Creating order for user: {}", currentUserEmail);
         Order order = new Order();
         order.setLocalDateTime(LocalDateTime.now());
         order.setUser(user);
@@ -47,8 +47,16 @@ public class OrderService {
 
         for (OrderItemRequestDto itemDto : requestDto.getItems()){
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(()-> new ResourceNotFoundException("Product not found"));
+                    .orElseThrow(() -> {
+                        log.warn("Product not found while creating order. productId: {}", itemDto.getProductId());
+                        return new ResourceNotFoundException("Product not found");
+                    });
+            log.debug("Processing order item. productId: {}, requestedQuantity: {}, availableStock: {}",
+                    itemDto.getProductId(), itemDto.getQuantity(), product.getStockQuantity());
+
             if (product.getStockQuantity() < itemDto.getQuantity()) {
+                log.warn("Insufficient stock for product: {} .Available: {}, Requested: {}",
+                        product.getName(),product.getStockQuantity(),itemDto.getQuantity());
                 throw new IllegalArgumentException("Insufficient stock for product: " + product.getName()
                         + ". Available: " + product.getStockQuantity() + ", Requested: " + itemDto.getQuantity());
             }
@@ -67,6 +75,7 @@ public class OrderService {
         }
         order.setTotalPrice(accumulatedTotal);
         Order savedOrder = orderRepository.save(order);
+        log.info("Order created successfully. orderId: {}, totalPrice: {}", savedOrder.getId(), savedOrder.getTotalPrice());
 
         return OrderMapper.toResponse(savedOrder);
     }
