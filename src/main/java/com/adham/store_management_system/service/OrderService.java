@@ -14,6 +14,9 @@ import com.adham.store_management_system.user.User;
 import com.adham.store_management_system.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,7 @@ public class OrderService {
     private final UserRepository userRepository;
 
     @Transactional
+    @CacheEvict(value = "products::item", allEntries = true)
     public OrderResponse createOrder(OrderRequestDto requestDto){
         // get user who created order
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

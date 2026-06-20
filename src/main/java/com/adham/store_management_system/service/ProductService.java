@@ -10,6 +10,10 @@ import com.adham.store_management_system.repository.CategoryRepository;
 import com.adham.store_management_system.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +28,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-
     public Page<ProductResponseDto> findAll(int page , int size , String sortBy) {
         log.debug("Fetching products. page: {}, size: {}, sortBy: {}", page, size, sortBy);
         Pageable pageable = PageRequest.of(page , size, Sort.by(sortBy));
@@ -32,6 +35,8 @@ public class ProductService {
                 .map(ProductMapper::toResponse);
     }
 
+    @Cacheable(value = "products::item"
+            , key = "#id")
     public ProductResponseDto findById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> {
@@ -41,6 +46,7 @@ public class ProductService {
         return ProductMapper.toResponse(product);
     }
 
+    @CacheEvict(value = {"products::page", "products::category::page"}, allEntries = true)
     public ProductResponseDto addProduct(ProductRequestDto dto) {
         log.info("Creating product with name {}", dto.getName());
         Category category = categoryRepository.findById(dto.getCategoryId())
@@ -52,13 +58,14 @@ public class ProductService {
 
             throw new IllegalArgumentException("Product already exists! To add more quantities, please use the Restock/Inventory endpoint.");
         }
-
         Product product = ProductMapper.toEntity(dto, category);
         category.addProduct(product);
         Product saveProduct = productRepository.save(product);
         log.info("Product created successfully with id {}", saveProduct.getId());
         return ProductMapper.toResponse(saveProduct);
     }
+
+    @CachePut(value = "products::item", key = "#productId")
     public ProductResponseDto restock(Long productId, Integer quantity){
         log.info("Restock request received for product {} with quantity {}",productId,quantity);
         if (quantity <=0){
@@ -79,6 +86,7 @@ public class ProductService {
         return ProductMapper.toResponse(updateStock);
     }
 
+    @CachePut(value = "products::item", key = "#id")
     public ProductResponseDto updateProductById(Long id, ProductRequestDto dto) {
         log.info("Updating product with id {}", id);
         Product product = productRepository.findById(id)
@@ -102,6 +110,8 @@ public class ProductService {
         return ProductMapper.toResponse(updateProduct);
     }
 
+
+    @CacheEvict(value = "products::item", key = "#id")
     public void deleteProduct(Long id) {
         log.info("Deleting product with id {}",id);
         Product product = productRepository.findById(id)
